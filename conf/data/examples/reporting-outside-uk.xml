@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CARF_OECD xmlns="urn:oecd:ties:carf:v1"
+           xmlns:stf="urn:oecd:ties:carfstf:v5"
+           version="1.5">
+  <MessageSpec>
+    <SendingEntityIN>SENDER-001</SendingEntityIN>
+    <TransmittingCountry>GB</TransmittingCountry>
+    <ReceivingCountry>US</ReceivingCountry>
+    <MessageType>CARF</MessageType>
+    <MessageRefId>MSG-OTHER-NEXUS</MessageRefId>
+    <MessageTypeIndic>CARF701</MessageTypeIndic>
+    <ReportingPeriod>2024-12-31</ReportingPeriod>
+    <Timestamp>2024-12-31T23:59:59</Timestamp>
+  </MessageSpec>
+  <CARFBody>
+    <RCASP>
+      <RCASP_ID>
+        <Entity>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">RCASP-TIN</TIN>
+          <Name>Cross-Border Exchange Ltd</Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+        </Entity>
+      </RCASP_ID>
+      <OtherNexus Nexus="CARF907" ResCountryCode="US"/>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD1</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-RCASP-ONX</stf:DocRefId>
+      </DocSpec>
+    </RCASP>
+  </CARFBody>
+</CARF_OECD>

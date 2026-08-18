@@ -16,111 +16,39 @@
 
 package uk.gov.hmrc.carfreporting.services
 
-import cats.data.NonEmptyChain
-import cats.syntax.all.*
-import com.ctc.wstx.stax.WstxInputFactory
-import org.codehaus.stax2.XMLStreamReader2
 import org.codehaus.stax2.validation.*
 import play.api.{Environment, Logging}
 import uk.gov.hmrc.carfreporting.dispatchers.XmlDispatcher
+import uk.gov.hmrc.carfreporting.models.ExtractedFileDetails
 import uk.gov.hmrc.carfreporting.models.errors.*
 import uk.gov.hmrc.carfreporting.types.ResultT
 
 import java.io.{BufferedInputStream, InputStream}
 import javax.inject.{Inject, Singleton}
-import javax.xml.stream.{XMLInputFactory, XMLStreamConstants}
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 @Singleton
 class XmlParserService @Inject() (env: Environment)(implicit xmlDispatcher: XmlDispatcher) extends Logging {
 
-  inline private val maxErrors = 101
-
-  def validateAndExtract(path: String): ResultT[Unit] =
+  def validateAndExtract(path: String): ResultT[ExtractedFileDetails] =
     for {
       schema      <- loadSchema
       inputStream <- openInputStream(path)
       result      <- initiate(schema, inputStream)
     } yield result
 
-  private def initiate(schema: XMLValidationSchema, inputStream: InputStream): ResultT[Unit] = ResultT.fromFuture {
-    Future {
-      validationAndExtraction(schema, inputStream)
-    } andThen { _ =>
-      inputStream.close()
-    } recover { e =>
-      logger.error(s"Fatal Error XML Stream Failed with message: ${e.getMessage}")
-      Left(InternalServerError(e.getMessage))
-    }
-  }
-
-  private def validationAndExtraction(
-      schema: XMLValidationSchema,
-      inputStream: InputStream
-  ): Either[CarfError, Unit] = {
-    val factory = new WstxInputFactory()
-
-    // Security hardening: block XML External Entity (XXE) attacks.
-    factory.setProperty(XMLInputFactory.SUPPORT_DTD, false)
-    factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false)
-    factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false)
-
-    val reader: XMLStreamReader2 = factory.createXMLStreamReader(inputStream).asInstanceOf[XMLStreamReader2]
-
-    reader.validateAgainst(schema)
-
-    val errors  = ListBuffer.empty[XmlError]
-    val docRefs = ListBuffer.empty[String]
-
-    reader.setValidationProblemHandler { (problem: XMLValidationProblem) =>
-      val loc  = problem.getLocation
-      val line = if (loc != null) loc.getLineNumber else 0
-      if (errors.size < maxErrors) {
-        errors += XmlError(line, problem.getType, problem.getMessage)
-      } else {
-        logger.warn("Truncated: more than $maxErrors schema errors in this file; further errors dropped.")
-        throw new XmlStreamFailSafeException
-      }
-    }
-
-    Try {
-      while (reader.hasNext) {
-        val event = reader.next()
-        event match {
-          case XMLStreamConstants.START_ELEMENT =>
-            val localName = reader.getLocalName
-
-            if (localName == "DocRefId") {
-              val docRefValue = reader.getElementText.trim
-              if (docRefValue.nonEmpty) {
-                docRefs += docRefValue
-              }
-            }
-          // TODO [CARF-593] Data Extraction - extract data here
-          case _                                => // Nothing
-        }
-      }
-      docRefs
-    } match {
-      case Success(value)                         =>
-        logger.debug(s"Extracted DocRefs:\n${value.mkString(",\n")}")
-        reader.close()
-        resolveErrors(errors)
-      case Failure(e: XmlStreamFailSafeException) =>
-        reader.close()
-        resolveErrors(errors)
-      case Failure(e)                             =>
-        reader.close()
+  private def initiate(schema: XMLValidationSchema, inputStream: InputStream): ResultT[ExtractedFileDetails] =
+    ResultT.fromFuture {
+      Future {
+        val handler = new XmlDataHandler
+        handler.validationAndExtraction(schema, inputStream)
+      } andThen { _ =>
+        inputStream.close()
+      } recover { e =>
+        logger.error(s"Fatal Error XML Stream Failed with message: ${e.getMessage}")
         Left(InternalServerError(e.getMessage))
-    }
-  }
-
-  private def resolveErrors(errors: ListBuffer[XmlError]): Either[CarfError, Unit] =
-    NonEmptyChain.fromSeq(errors.toSeq) match {
-      case Some(nec) => Left(XmlErrors(nec.toNonEmptyVector.toVector))
-      case None      => ().asRight
+      }
     }
 
   private def openInputStream(path: String): ResultT[InputStream] =

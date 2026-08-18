@@ -18,7 +18,7 @@ package uk.gov.hmrc.carfreporting.performance
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.carfreporting.base.NoGuiceSpecBase
-import uk.gov.hmrc.carfreporting.controllers.upscan.XmlValidationAndExtractionController
+import uk.gov.hmrc.carfreporting.controllers.XmlValidationAndExtractionController
 import uk.gov.hmrc.carfreporting.dispatchers.{DispatcherName, XmlDispatcher}
 import uk.gov.hmrc.carfreporting.itutil.Reporter.*
 import uk.gov.hmrc.carfreporting.services.XmlParserService

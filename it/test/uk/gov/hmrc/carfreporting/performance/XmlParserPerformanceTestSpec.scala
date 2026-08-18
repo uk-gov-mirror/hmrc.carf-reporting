@@ -55,7 +55,8 @@ class XmlParserPerformanceTestSpec extends NoGuiceSpecBase {
   inline val invalidCarfXmlSizeOnDisk = 4000L
   val twoFiftyMbInBytes               = 274726912L // 262mb (size on disk)
   inline val bigInvalidXmlSizeOnDisk  = 12000L // 12kb (size on disk)
-  val timeout = 30.seconds
+
+  private val timeout = 30.seconds
 
   "XmlParserService (small thread pool)" - {
     val smallDispatcher = new DispatcherName {

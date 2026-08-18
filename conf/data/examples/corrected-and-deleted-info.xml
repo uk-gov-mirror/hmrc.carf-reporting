@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CARF_OECD xmlns="urn:oecd:ties:carf:v1"
+           xmlns:stf="urn:oecd:ties:carfstf:v5"
+           version="1.5">
+  <MessageSpec>
+    <SendingEntityIN>SENDER-001</SendingEntityIN>
+    <TransmittingCountry>GB</TransmittingCountry>
+    <ReceivingCountry>US</ReceivingCountry>
+    <MessageType>CARF</MessageType>
+    <MessageRefId>MSG-CORRECTIONS-AND-DELETIONS</MessageRefId>
+    <MessageTypeIndic>CARF702</MessageTypeIndic>
+    <ReportingPeriod>2024-12-31</ReportingPeriod>
+    <Timestamp>2024-12-31T23:59:59</Timestamp>
+  </MessageSpec>
+  <CARFBody>
+    <RCASP>
+      <RCASP_ID>
+        <Individual>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">123456789</TIN>
+          <Name>
+            <FirstName>John</FirstName>
+            <LastName>Smith</LastName>
+          </Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix>
+              <Street>1 Example Street</Street>
+              <City>London</City>
+            </AddressFix>
+          </Address>
+          <BirthInfo>
+            <BirthDate>1980-03-31</BirthDate>
+          </BirthInfo>
+        </Individual>
+      </RCASP_ID>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD2</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-B1</stf:DocRefId>
+      </DocSpec>
+    </RCASP>
+    <CryptoUsers>
+      <UserID>
+        <Individual>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">U1</TIN>
+          <Name><FirstName>User</FirstName><LastName>One</LastName></Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+          <BirthInfo><BirthDate>1990-01-01</BirthDate></BirthInfo>
+        </Individual>
+      </UserID>
+      <RelevantTransactions>
+        <CryptoAsset>BTC</CryptoAsset>
+        <CryptoToCryptoIn>
+          <NumberofTransactions>1</NumberofTransactions>
+          <Amount currCode="USD">1.00</Amount>
+          <NumberofUnits>0.1</NumberofUnits>
+        </CryptoToCryptoIn>
+      </RelevantTransactions>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD2</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-USER-CORR-1</stf:DocRefId>
+      </DocSpec>
+    </CryptoUsers>
+    <CryptoUsers>
+      <UserID>
+        <Individual>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">U1</TIN>
+          <Name><FirstName>User</FirstName><LastName>ToDelete</LastName></Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+          <BirthInfo><BirthDate>1990-01-01</BirthDate></BirthInfo>
+        </Individual>
+      </UserID>
+      <RelevantTransactions>
+        <CryptoAsset>BTC</CryptoAsset>
+        <CryptoToCryptoIn>
+          <NumberofTransactions>1</NumberofTransactions>
+          <Amount currCode="USD">1.00</Amount>
+          <NumberofUnits>0.1</NumberofUnits>
+        </CryptoToCryptoIn>
+      </RelevantTransactions>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD3</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-USER-DEL-1</stf:DocRefId>
+      </DocSpec>
+    </CryptoUsers>
+  </CARFBody>
+  <CARFBody>
+    <RCASP>
+      <RCASP_ID>
+        <Entity>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">R2</TIN>
+          <Name>Body Two RCASP</Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+        </Entity>
+      </RCASP_ID>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD1</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-B2</stf:DocRefId>
+      </DocSpec>
+    </RCASP>
+  </CARFBody>
+</CARF_OECD>

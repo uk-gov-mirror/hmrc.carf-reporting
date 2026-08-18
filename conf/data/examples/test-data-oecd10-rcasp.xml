@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CARF_OECD xmlns="urn:oecd:ties:carf:v1"
+           xmlns:stf="urn:oecd:ties:carfstf:v5"
+           version="1.5">
+  <MessageSpec>
+    <SendingEntityIN>RCASP001</SendingEntityIN>
+    <TransmittingCountry>GB</TransmittingCountry>
+    <ReceivingCountry>US</ReceivingCountry>
+    <MessageType>CARF</MessageType>
+    <MessageRefId>MSG-TESTDATA-RCASP</MessageRefId>
+    <MessageTypeIndic>CARF701</MessageTypeIndic>
+    <ReportingPeriod>2024-12-31</ReportingPeriod>
+    <Timestamp>2024-12-31T23:59:59</Timestamp>
+  </MessageSpec>
+  <CARFBody>
+    <RCASP>
+      <RCASP_ID>
+        <Entity>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">RCASP-TIN</TIN>
+          <Name>Test-Only Exchange Ltd</Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+        </Entity>
+      </RCASP_ID>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD10</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-RCASP-T10</stf:DocRefId>
+      </DocSpec>
+    </RCASP>
+  </CARFBody>
+</CARF_OECD>

@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.carfreporting.config
+package uk.gov.hmrc.carfreporting.models
 
-import java.time.ZoneId
+import play.api.libs.json.*
 
-object Constants {
+case class ExtractedFileDetails(
+    messageRefId: String,
+    sendingEntityIn: String,
+    rcaspName: Option[String],
+    messageTypeIndic: String,
+    hasOtherNexus: Boolean,
+    hasCryptoUsers: Boolean,
+    docTypeIndic: Option[String],
+    isTestData: Boolean,
+    allCryptoUsersAreCorrections: Boolean,
+    allCryptoUsersAreDeletions: Boolean
+)
 
-  val ukZoneId: ZoneId = ZoneId.of("Europe/London")
-
-  val testDataDocTypeIndics: Set[String] = Set("OECD10", "OECD11", "OECD12", "OECD13")
-  val correctionDocTypeIndic: String     = "OECD2"
-  val deletionDocTypeIndic: String       = "OECD3"
-  val nilReportMessageTypeIndic: String  = "CARF703"
-
+object ExtractedFileDetails {
+  implicit val format: OFormat[ExtractedFileDetails] = Json.format[ExtractedFileDetails]
 }

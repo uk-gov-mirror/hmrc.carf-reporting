@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CARF_OECD xmlns="urn:oecd:ties:carf:v1"
+           xmlns:stf="urn:oecd:ties:carfstf:v5"
+           version="1.5">
+  <MessageSpec>
+    <SendingEntityIN>SENDER-001</SendingEntityIN>
+    <TransmittingCountry>GB</TransmittingCountry>
+    <ReceivingCountry>US</ReceivingCountry>
+    <MessageType>CARF</MessageType>
+    <MessageRefId>MSG-ALL-CORRECTIONS</MessageRefId>
+    <MessageTypeIndic>CARF702</MessageTypeIndic>
+    <ReportingPeriod>2024-12-31</ReportingPeriod>
+    <Timestamp>2024-12-31T23:59:59</Timestamp>
+  </MessageSpec>
+  <CARFBody>
+    <RCASP>
+      <RCASP_ID>
+        <Entity>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">RCASP-TIN</TIN>
+          <Name>Corrections Exchange Ltd</Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+        </Entity>
+      </RCASP_ID>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD2</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-RCASP-CORR</stf:DocRefId>
+      </DocSpec>
+    </RCASP>
+    <CryptoUsers>
+      <UserID>
+        <Individual>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">U1</TIN>
+          <Name><FirstName>User</FirstName><LastName>One</LastName></Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+          <BirthInfo><BirthDate>1990-01-01</BirthDate></BirthInfo>
+        </Individual>
+      </UserID>
+      <RelevantTransactions>
+        <CryptoAsset>BTC</CryptoAsset>
+        <CryptoToCryptoIn>
+          <NumberofTransactions>1</NumberofTransactions>
+          <Amount currCode="USD">1.00</Amount>
+          <NumberofUnits>0.1</NumberofUnits>
+        </CryptoToCryptoIn>
+      </RelevantTransactions>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD2</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-USER-CORR-1</stf:DocRefId>
+      </DocSpec>
+    </CryptoUsers>
+    <CryptoUsers>
+      <UserID>
+        <Individual>
+          <ResCountryCode>GB</ResCountryCode>
+          <TIN issuedBy="GB">U2</TIN>
+          <Name><FirstName>User</FirstName><LastName>Two</LastName></Name>
+          <Address>
+            <CountryCode>GB</CountryCode>
+            <AddressFix><City>London</City></AddressFix>
+          </Address>
+          <BirthInfo><BirthDate>1990-01-02</BirthDate></BirthInfo>
+        </Individual>
+      </UserID>
+      <RelevantTransactions>
+        <CryptoAsset>ETH</CryptoAsset>
+        <CryptoToCryptoIn>
+          <NumberofTransactions>2</NumberofTransactions>
+          <Amount currCode="USD">2.00</Amount>
+          <NumberofUnits>0.2</NumberofUnits>
+        </CryptoToCryptoIn>
+      </RelevantTransactions>
+      <DocSpec>
+        <stf:DocTypeIndic>OECD2</stf:DocTypeIndic>
+        <stf:DocRefId>DOC-USER-CORR-2</stf:DocRefId>
+      </DocSpec>
+    </CryptoUsers>
+  </CARFBody>
+</CARF_OECD>

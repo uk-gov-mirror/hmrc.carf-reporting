@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.carfreporting.controllers.upscan
+package uk.gov.hmrc.carfreporting.controllers
 
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, verify, when}
@@ -22,6 +22,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import play.api.libs.json.Json
 import play.api.test.Helpers.*
 import uk.gov.hmrc.carfreporting.base.SpecBase
+import uk.gov.hmrc.carfreporting.models.ExtractedFileDetails
 import uk.gov.hmrc.carfreporting.models.errors.*
 import uk.gov.hmrc.carfreporting.models.responses.XmlValidationAndExtractionResponse
 import uk.gov.hmrc.carfreporting.services.XmlParserService
@@ -50,19 +51,25 @@ class XmlValidationAndExtractionControllerSpec extends SpecBase {
              |""".stripMargin
         )
 
-        when(mockXmlParserService.validateAndExtract(path)).thenReturn(ResultT.fromValue(()))
+        val extractedFileDetails = ExtractedFileDetails(
+          messageRefId = "MSG-2024-0001",
+          sendingEntityIn = "SENDER-001",
+          rcaspName = Some("Acme Crypto Exchange Ltd"),
+          messageTypeIndic = "CARF701",
+          hasOtherNexus = false,
+          hasCryptoUsers = true,
+          docTypeIndic = Some("OECD1"),
+          isTestData = false,
+          allCryptoUsersAreCorrections = false,
+          allCryptoUsersAreDeletions = false
+        )
+
+        when(mockXmlParserService.validateAndExtract(path)).thenReturn(ResultT.fromValue(extractedFileDetails))
 
         val result = testController.processXml(fakeRequestWithJsonBody(requestBody))
 
-        val expectedResponse = XmlValidationAndExtractionResponse(
-          OK,
-          path,
-          None,
-          Vector.empty
-        )
-
         status(result)        mustEqual OK
-        contentAsJson(result) mustEqual Json.toJson(expectedResponse)
+        contentAsJson(result) mustEqual Json.toJson(extractedFileDetails)
 
         verify(mockXmlParserService).validateAndExtract(ArgumentMatchers.eq(path))
       }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.carfreporting.controllers.upscan
+package uk.gov.hmrc.carfreporting.controllers
 
 import play.api.Logging
 import play.api.libs.json.*
@@ -43,18 +43,9 @@ class XmlValidationAndExtractionController @Inject() (cc: ControllerComponents, 
         ,
         valid =>
           service.validateAndExtract(valid.path).value.map {
-            case Right(value)               =>
-              Ok(
-                Json.toJson(
-                  XmlValidationAndExtractionResponse(
-                    OK,
-                    valid.path,
-                    None,
-                    Vector.empty
-                  )
-                )
-              )
-            case Left(xmlErrors: XmlErrors) =>
+            case Right(extractedFileDetails) =>
+              Ok(Json.toJson(extractedFileDetails))
+            case Left(xmlErrors: XmlErrors)  =>
               logger.warn(
                 "[XmlValidationAndExtractionController][processXml] Failed to validate XML with " +
                   s"(${xmlErrors.errors.size}) error(s)"
@@ -69,7 +60,7 @@ class XmlValidationAndExtractionController @Inject() (cc: ControllerComponents, 
                   )
                 )
               )
-            case Left(error)                =>
+            case Left(error)                 =>
               logger.error(
                 s"[XmlValidationAndExtractionController][processXml] Failed to validate XML with unexpected " +
                   s"error with message: ${error.message}"

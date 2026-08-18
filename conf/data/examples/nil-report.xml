@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<CARF_OECD xmlns="urn:oecd:ties:carf:v1"
+           xmlns:stf="urn:oecd:ties:carfstf:v5"
+           version="1.5">
+  <MessageSpec>
+    <SendingEntityIN>SENDER-001</SendingEntityIN>
+    <TransmittingCountry>GB</TransmittingCountry>
+    <ReceivingCountry>US</ReceivingCountry>
+    <MessageType>CARF</MessageType>
+    <MessageRefId>MSG-NO-USERS</MessageRefId>
+    <MessageTypeIndic>CARF703</MessageTypeIndic>
+    <ReportingPeriod>2024-12-31</ReportingPeriod>
+    <Timestamp>2024-12-31T23:59:59</Timestamp>
+  </MessageSpec>
+</CARF_OECD>
