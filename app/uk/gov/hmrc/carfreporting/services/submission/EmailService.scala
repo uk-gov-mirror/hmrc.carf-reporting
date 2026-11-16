@@ -53,43 +53,32 @@ class EmailService @Inject() (
         logInfo("[EmailService][sendFilePassedEmails] User is the RCASP, skipping RCASP email")
         List.empty[Future[EmailStatus]]
       } else {
-        userBusinessName(submission) match {
-          case None               =>
-            logWarn("[EmailService][sendFilePassedEmails] Invalid primary contact, skipping RCASP email")
-            List.empty[Future[EmailStatus]]
-          case Some(businessName) =>
-            val params = common + ("userBusinessName" -> businessName)
-            rcaspRecipients(submission).map { r =>
-              emailConnector.sendEmail(r.email, carfFilePassedRcaspTemplateId, params + ("contactName" -> r.name))
-            }
+        val rcaspParams = withUserBusinessName("sendFilePassedEmails", submission, common)
+        rcaspRecipients(submission).map { r =>
+          emailConnector.sendEmail(r.email, carfFilePassedRcaspTemplateId, rcaspParams + ("contactName" -> r.name))
         }
       }
 
     Future.sequence(userSends ++ rcaspSends).map(logOutcome("sendFilePassedEmails"))
   }
 
-  def sendFileFailedEmails(submission: SubmissionDetailsCache)(implicit hc: HeaderCarrier): Future[Unit] =
-    userBusinessName(submission) match {
-      case None               =>
-        logWarn("[EmailService][sendFileFailedEmails] Invalid primary contact, skipping user emails")
-        Future.successful(())
-      case Some(businessName) =>
-        val details = submission.extractedFileDetails
-        val common  = Map(
-          "dateTime"         -> EmailDateTimeFormatter.format(submission.lastStatusUpdateTime),
-          "fileId"           -> details.messageRefId,
-          "rcaspId"          -> details.sendingEntityIn,
-          "rcaspLabel"       -> rcaspLabel(details),
-          "rcaspName"        -> rcaspName(submission),
-          "userBusinessName" -> businessName
-        )
+  def sendFileFailedEmails(submission: SubmissionDetailsCache)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = submission.extractedFileDetails
+    val base    = Map(
+      "dateTime"   -> EmailDateTimeFormatter.format(submission.lastStatusUpdateTime),
+      "fileId"     -> details.messageRefId,
+      "rcaspId"    -> details.sendingEntityIn,
+      "rcaspLabel" -> rcaspLabel(details),
+      "rcaspName"  -> rcaspName(submission)
+    )
+    val common  = withUserBusinessName("sendFileFailedEmails", submission, base)
 
-        val sends = userRecipients(submission).map { r =>
-          emailConnector.sendEmail(r.email, carfFileFailedUserTemplateId, common + ("contactName" -> r.name))
-        }
-
-        Future.sequence(sends).map(logOutcome("sendFileFailedEmails"))
+    val sends = userRecipients(submission).map { r =>
+      emailConnector.sendEmail(r.email, carfFileFailedUserTemplateId, common + ("contactName" -> r.name))
     }
+
+    Future.sequence(sends).map(logOutcome("sendFileFailedEmails"))
+  }
 
   private def userRecipients(submission: SubmissionDetailsCache): List[Recipient] =
     (submission.subscriptionDetails.primaryContact :: submission.subscriptionDetails.secondaryContact.toList)
@@ -120,13 +109,24 @@ class EmailService @Inject() (
     }
 
   private def userBusinessName(submission: SubmissionDetailsCache): Option[String] = {
-    val contact = submission.subscriptionDetails.primaryContact
-    (contact.organisation, contact.individual) match {
-      case (Some(org), None)        => Some(org.name)
-      case (None, Some(individual)) => Some(individual.fullName)
-      case _                        => None
-    }
+    val details = submission.subscriptionDetails
+    details.tradingName
+      .map(_.trim)
+      .filter(_.nonEmpty)
+      .orElse(details.primaryContact.individual.map(_.fullName))
   }
+
+  private def withUserBusinessName(
+      context: String,
+      submission: SubmissionDetailsCache,
+      params: Map[String, String]
+  ): Map[String, String] =
+    userBusinessName(submission) match {
+      case Some(name) => params + ("userBusinessName" -> name)
+      case None       =>
+        logInfo(s"[EmailService][$context] User business name not known, using fallback content")
+        params
+    }
 
   private def rcaspName(submission: SubmissionDetailsCache): String = {
     val details = submission.extractedFileDetails
